@@ -28,8 +28,6 @@ public class KeyboardPlayer extends Object {
         MOVEMENT_SPEED = movementSpeed;
         MINIMUM_Y = minimumY;
         MAXIMUM_Y = maximumY;
-
-        System.out.println(getHeight());
     }
 
     /**
@@ -39,7 +37,9 @@ public class KeyboardPlayer extends Object {
     public void handleFrame(double frameMultiplier, Pong pong) {
         List<Integer> inputs = pong.getInputHandler().getInputs();
 
-        if (inputs.contains(inputUp)) setCoordinateY((int) Math.max(getCoordinateY() - (MOVEMENT_SPEED * frameMultiplier), MINIMUM_Y));
-        if (inputs.contains(inputDown)) setCoordinateY((int) Math.min(getCoordinateY() + (MOVEMENT_SPEED * frameMultiplier), MAXIMUM_Y));
+        if (inputs.contains(inputUp))
+            setCoordinateY((int) Math.max(getCoordinateY() - (MOVEMENT_SPEED * frameMultiplier), MINIMUM_Y));
+        if (inputs.contains(inputDown))
+            setCoordinateY((int) Math.min(getCoordinateY() + (MOVEMENT_SPEED * frameMultiplier), MAXIMUM_Y));
     }
 }

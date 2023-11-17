@@ -2,12 +2,20 @@ package main.am.noah.handler;
 
 import main.am.noah.Pong;
 import main.am.noah.object.Object;
+import main.am.noah.object.ball.Ball;
+import main.am.noah.utils.RayCastUtil;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class WindowHandler extends JFrame {
+    private final double[] frameDeltaTimeArray = new double[50];
     Pong pong;
+    private long lastRecalculateFrameTimes;
+    private String lastMs;
+    private String lastFps;
+    private int lastFrameIndex;
+
 
     public WindowHandler(Pong pong) {
         this.pong = pong;
@@ -99,7 +107,7 @@ public class WindowHandler extends JFrame {
         final int topTextWidth = g.getFontMetrics().stringWidth(topText);
 
         // Render the TopText.
-        g.drawString(topText, (getWidth() / 2) - (topTextWidth / 2),(getHeight() / 2) - 50);
+        g.drawString(topText, (getWidth() / 2) - (topTextWidth / 2), (getHeight() / 2) - 50);
 
         // I want to make the bottom text smaller.
         g.setFont(new Font(getFont().getName(), getFont().getStyle(), 50));
@@ -127,7 +135,7 @@ public class WindowHandler extends JFrame {
         final int bottomTextWidth = g.getFontMetrics().stringWidth(bottomText);
 
         // Scale the position of each String into a proper position.
-        g.drawString(topText, (getWidth() / 2) - (topTextWidth / 2),(getHeight() / 2) - 150);
+        g.drawString(topText, (getWidth() / 2) - (topTextWidth / 2), (getHeight() / 2) - 150);
         g.drawString(middleText, (getWidth() / 2) - (middleTextWidth / 2), (getHeight() / 2));
         g.drawString(bottomText, (getWidth() / 2) - (bottomTextWidth / 2), (getHeight() / 2) + 150);
     }
@@ -150,7 +158,7 @@ public class WindowHandler extends JFrame {
         final int bottomTextWidth = g.getFontMetrics().stringWidth(bottomText);
 
         // Scale the position of each String into a proper position.
-        g.drawString(topText, (getWidth() / 2) - (topTextWidth / 2),(getHeight() / 2) - 150);
+        g.drawString(topText, (getWidth() / 2) - (topTextWidth / 2), (getHeight() / 2) - 150);
         g.drawString(middleText, (getWidth() / 2) - (middleTextWidth / 2), (getHeight() / 2));
         g.drawString(bottomText, (getWidth() / 2) - (bottomTextWidth / 2), (getHeight() / 2) + 150);
     }
@@ -178,25 +186,60 @@ public class WindowHandler extends JFrame {
 
         // Scale the position of each String into a proper position.
         g.drawString(topText, (getWidth() / 2) - (topTextWidth / 2), (getHeight() / 2) - 200);
-        if (pong.getStageHandler().isLeftPlayer()) g.drawString(middleTextTop, (getWidth() / 2) - (middleTextTopWidth / 2), (getHeight() / 2) - 100);
+        if (pong.getStageHandler().isLeftPlayer())
+            g.drawString(middleTextTop, (getWidth() / 2) - (middleTextTopWidth / 2), (getHeight() / 2) - 100);
         g.drawString(middleTextMiddle, (getWidth() / 2) - (middleTextMiddleWidth / 2), (getHeight() / 2));
-        if (pong.getStageHandler().isRightPlayer()) g.drawString(middleTextBottom, (getWidth() / 2) - (middleTextBottomWidth / 2), (getHeight() / 2) + 100);
+        if (pong.getStageHandler().isRightPlayer())
+            g.drawString(middleTextBottom, (getWidth() / 2) - (middleTextBottomWidth / 2), (getHeight() / 2) + 100);
         g.drawString(bottomText, (getWidth() / 2) - (bottomTextWidth / 2), (getHeight() / 2) + 200);
     }
 
     /**
      * Paint our general game frame.
-     * This includes all of the balls, all of the paddles, and a line down the center of the screen.
+     * This includes all the balls, all the paddles, and a line down the center of the screen.
      * We also scale this based on the resolution of our window.
      */
     private void paintGameFrame(Graphics g, double widthMultiplier, double heightMultiplier) {
         setResizable(true);
+
+        // DEBUG draw collision
+        if (pong.lastBallCollisionX != 0 && pong.lastBallCollisionY != 0) {
+            g.drawOval(pong.lastBallCollisionX, pong.lastBallCollisionY, 5, 5);
+        }
+
+        // Draw the current ms & fps on the screen.
+        if (System.currentTimeMillis() - lastRecalculateFrameTimes >= 100) {
+            lastRecalculateFrameTimes = System.currentTimeMillis();
+            lastFps = calculateFps() + " fps";
+            lastMs = String.format("%.4f", pong.getMsPerFrame()) + " ms";
+        }
+        frameDeltaTimeArray[lastFrameIndex] = pong.getMsPerFrame();
+        lastFrameIndex = (lastFrameIndex + 1) % frameDeltaTimeArray.length;
+
+        g.drawString(lastFps, (int) (getWidth() * 0.01f), (int) (getHeight() * 0.06f));
+        g.drawString(lastMs, (int) (getWidth() * 0.01f), (int) (getHeight() * 0.08f));
 
         // Draw a line down the center of the screen.
         g.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
 
         // Go through all of our objects and draw them on the screen.
         for (Object object : pong.getObjects()) {
+            //DEBUG line for ball
+            if (object instanceof Ball) {
+                int x1 = object.getCoordinateX() + (StageHandler.BALL_DIAMETER / 2);
+                int y1 = object.getCoordinateY() + (StageHandler.BALL_DIAMETER / 2);
+                int x2 = pong.lastBallCollisionX;
+                int y2 = pong.lastBallCollisionY;
+
+                double degree = RayCastUtil.calculateDirectionDegrees(x1, y1, x2, y2);
+
+                // Calculate the endpoint of the line by extending it from the center of the object
+                int lineLength = -2000; // You can adjust the length as needed
+                int x2Line = x1 + (int) (lineLength * Math.cos(Math.toRadians(degree)));
+                int y2Line = y1 + (int) (lineLength * Math.sin(Math.toRadians(degree)));
+
+                g.drawLine(pong.lastBallCollisionX, pong.lastBallCollisionY, x2Line, y2Line);
+            }
             g.fillRect((int) (object.getCoordinateX() * widthMultiplier),
                     (int) (object.getCoordinateY() * heightMultiplier),
                     (int) (object.getWidth() * widthMultiplier),
@@ -216,5 +259,15 @@ public class WindowHandler extends JFrame {
         g.setFont(new Font(getFont().getName(), getFont().getStyle(), getWidth() / (text.length() * 2)));
 
         g.drawString(text, (getWidth() / 2) - (g.getFontMetrics().stringWidth(text) / 2), getHeight() / 2);
+    }
+
+    private String calculateFps() {
+        double total = 0.0d;
+        for (double deltaTime : frameDeltaTimeArray) {
+            total += deltaTime;
+        }
+        double averageFrameTime = total / frameDeltaTimeArray.length;
+        double fps = 1000.0 / averageFrameTime;
+        return String.format("%.0f", fps);
     }
 }

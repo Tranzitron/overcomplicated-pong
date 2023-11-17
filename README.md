@@ -1,6 +1,7 @@
 # Overcomplicated Pong
 
-Pong written entirely in Java with no external dependencies as a challenge for myself. It's not optimized at all and could be easily improved, but worked well as a challenge for myself.
+Pong written entirely in Java with no external dependencies as a challenge for myself. It's not optimized at all and
+could be easily improved, but worked well as a challenge for myself.
 
 # Features:
 

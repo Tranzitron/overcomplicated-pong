@@ -30,6 +30,13 @@ public abstract class Object {
     }
 
     /**
+     * Set the Width of the object.
+     */
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    /**
      * Return the Height of the object.
      */
     public int getHeight() {
@@ -37,17 +44,10 @@ public abstract class Object {
     }
 
     /**
-     * Return the CoordinateX of the object.
+     * Set the Height of the object.
      */
-    public int getCoordinateX() {
-        return coordinateX;
-    }
-
-    /**
-     * Return the CoordinateY of the object.
-     */
-    public int getCoordinateY() {
-        return coordinateY;
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     /*
@@ -57,6 +57,39 @@ public abstract class Object {
      * of certain sides of the object.
      *
      * While this can be easily recreated, this makes related code look much cleaner.
+     */
+
+    /**
+     * Return the CoordinateX of the object.
+     */
+    public int getCoordinateX() {
+        return coordinateX;
+    }
+
+    /**
+     * Set the CoordinateX of the object.
+     */
+    public void setCoordinateX(int coordinateX) {
+        this.coordinateX = coordinateX;
+    }
+
+    /**
+     * Return the CoordinateY of the object.
+     */
+    public int getCoordinateY() {
+        return coordinateY;
+    }
+
+    /**
+     * Set the CoordinateY of the object.
+     */
+    public void setCoordinateY(int coordinateY) {
+        this.coordinateY = coordinateY;
+    }
+
+    /*
+     * These are our Setters.
+     * This allows us to set the information saved within this class in an easy and neat manner.
      */
 
     /**
@@ -85,39 +118,6 @@ public abstract class Object {
      */
     public int getBottomY() {
         return (coordinateY + height);
-    }
-
-    /*
-     * These are our Setters.
-     * This allows us to set the information saved within this class in an easy and neat manner.
-     */
-
-    /**
-     * Set the Width of the object.
-     */
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    /**
-     * Set the Height of the object.
-     */
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    /**
-     * Set the CoordinateX of the object.
-     */
-    public void setCoordinateX(int coordinateX) {
-        this.coordinateX = coordinateX;
-    }
-
-    /**
-     * Set the CoordinateY of the object.
-     */
-    public void setCoordinateY(int coordinateY) {
-        this.coordinateY = coordinateY;
     }
 
     /*

@@ -9,9 +9,8 @@ import java.util.List;
 
 public class InputHandler implements KeyListener {
 
-    Pong pong;
-
     private final List<Integer> inputs;
+    Pong pong;
 
     public InputHandler(Pong pong) {
         this.pong = pong;
@@ -27,13 +26,13 @@ public class InputHandler implements KeyListener {
 
     /**
      * This method does tell us when a key is pressed, but it has limitations.
-     *
+     * <p>
      * This method will continuously be triggered if a key is held down, but not synced with our desired framerate.
      * If this was used to move paddles, it could lead to them being moved a-sync from the game itself.
-     *
+     * <p>
      * This also does not support multiple keys being pressed.
      * If you do press multiple, you will only get inputs from the latest pressed.
-     *
+     * <p>
      * Thus, we don't use this for game inputs as there are better alternatives.
      * However, it is safe for Menu usage, such as Pause/Main screen inputs.
      */
@@ -60,7 +59,7 @@ public class InputHandler implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         /*
-         * By default lists use integers for removing an item at a certain position in the list, so this is how we
+         * By default, lists use integers for removing an item at a certain position in the list, so this is how we
          * have to get around that.
          * By casting the keycode to an object it's removed instead of used to check for existence at a certain point in
          * the list.
